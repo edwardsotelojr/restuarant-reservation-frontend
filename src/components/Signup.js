@@ -74,7 +74,7 @@ class Signup extends Component {
                 type="text"
                 name="name"
                 onChange={this.handleChange}
-                placeholder="Enter name"
+                placeholder="Enter full name"
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -92,7 +92,7 @@ class Signup extends Component {
                 type="text"
                 name="password"
                 onChange={this.handleChange}
-                placeholder="Enter Password"
+                placeholder="Enter password"
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -101,7 +101,7 @@ class Signup extends Component {
                 type="text"
                 name="confirmPassword"
                 onChange={this.handleChange}
-                placeholder="ReEnter Password"
+                placeholder="Confirm password"
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -110,7 +110,7 @@ class Signup extends Component {
                 type="text"
                 name="phone"
                 onChange={this.handleChange}
-                placeholder="Enter Phone Number"
+                placeholder="###-###-####"
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -119,7 +119,7 @@ class Signup extends Component {
                 type="text"
                 name="mailingAddress"
                 onChange={this.handleChange}
-                placeholder="Enter Mailing Address"
+                placeholder="123 Address"
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -128,7 +128,7 @@ class Signup extends Component {
                 type="text"
                 name="billingAddress"
                 onChange={this.handleChange}
-                placeholder="Enter Billing Address"
+                placeholder="123 Address"
               />
             </Form.Group>
             <Form.Group className="mb-3">
