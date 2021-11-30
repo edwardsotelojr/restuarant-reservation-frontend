@@ -2,6 +2,21 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## NOTE FROM LIZ ##
+if you are using port # 3000 or others...use this code to kill the port `kill -9 $(lsof -ti:3000)` and run `npm run` afterwards.
+
+## HOW TO INITALIZE TO GIT FOR FIRST TIME ##
+1) download zip file from git
+2) git add .
+3) git commit -m "put something here"
+4) run `git init`
+5) run `git remote add origin https://github.com/edwardsotelojr/restuarant-reservation-frontend.git` to establish connection to our github
+6) create your branch `git branch liz` - replace liz with whatever your name
+7) go to your branch by `git checkout liz`
+8) use `git fetch`, `git pull origin liz` to update your code to our current code to github
+9) use `git push origin liz` to submit your changes into our github (assuming that you edit the code and do steps 2 & 3)
+10) do `npm install` to download all the packages/dependency and `npm update` to update your version of installions in package.json
+
 ## Available Scripts
 
 In the project directory, you can run:
