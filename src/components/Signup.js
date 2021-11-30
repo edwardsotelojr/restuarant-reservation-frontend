@@ -132,7 +132,7 @@ class Signup extends Component {
               />
             </Form.Group>
             <Form.Group className="mb-3">
-              <Form.Label>preferred Amount Of Diners</Form.Label>
+              <Form.Label>Preferred Amount Of Diners</Form.Label>
               <Form.Control
                 type="number"
                 name="preferredAmountOfDiners"
@@ -142,7 +142,7 @@ class Signup extends Component {
             </Form.Group>
 
       <Button variant="primary" type="submit">
-              Submit
+              Sign up
             </Button>
           </Form>
       </Row>
