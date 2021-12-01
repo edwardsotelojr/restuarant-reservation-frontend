@@ -8,7 +8,7 @@ import { Component } from "react";
 import history from "./history";
 import setAuthToken from "./utils/setAuthToken";
 import Header from "./components/Header"
-
+import Success from "./components/Success";
 //const store = makeStore();
 // Check for token to keep user logged in
 if (localStorage.jwtToken !== undefined) {
@@ -40,7 +40,7 @@ class App extends Component {
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/signup" component={Signup} />
-
+          <Route path="/success" component={Success}/>
         </Switch>
         
         </div>
