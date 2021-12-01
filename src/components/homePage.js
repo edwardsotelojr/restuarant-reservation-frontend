@@ -16,6 +16,8 @@ import React, { Component } from "react";
 import TimePicker from "@mui/lab/TimePicker";
 import { getDate } from "date-fns";
 import history from "../history";
+import setAuthToken from "../utils/setAuthToken";
+import jwt_decode from 'jwt-decode';
 
 
 const tables = {
@@ -67,12 +69,18 @@ let arrayOfTables = [
 class HomePage extends Component {
   constructor(props) {
     super(props);
+    console.log("props", this.props.user)
     this.state = {
       tables: [],
       date: "",
       time: "",
       selectedTables: [],
+      open: false,
+      password: "",
+      email: props.email,
+      loginEmail: "",
     };
+    this.login = this.login.bind(this)
     this.setTables = this.setTables.bind(this);
     this.handleChange = this.handleChange.bind(this)
   }
@@ -140,12 +148,16 @@ class HomePage extends Component {
     const {
       name,
       diners,
+      email,
+      phone,
       selectedTables,
       timee,
       datee
     } = this.state;
     const reservation = {
         name,
+        email,
+        phone,
         diners: parseInt(diners),
         tables: selectedTables,
         time: timee,
@@ -165,7 +177,42 @@ class HomePage extends Component {
     );
   };
 
+  login(e){
+    e.preventDefault()
+    console.log("here")
+    const user = {
+      loginEmail: this.state.loginEmail,
+      password: this.state.password
+    }
+    axios
+    .post("http://localhost:8000/login", user)
+    .then(res => { 
+      console.log(res)
+      const { token } = res.data;
+        localStorage.setItem("jwtToken", token);
+        // Set token to Auth header
+        setAuthToken(token);
+        // Decode token to get user data
+        const decoded = jwt_decode(token);
+        console.log("decoded ",decoded.user)
+        // Set current user
+        //dispatch(setCurrentUser(decoded.user))
+        this.setState({email: this.state.loginEmail,
+        name: res.data.message.name,
+      phone: res.data.message.phone
+    })
+    })
+    .catch(err => {console.log(err)})
+  }
+
+  logout(){
+    localStorage.removeItem("jwtToken");
+    // Remove auth header for future requests
+    setAuthToken(false);
+  }
+
   render() {
+    //console.log(this.props)
     return (
       <Container>
         <Row>
@@ -229,19 +276,66 @@ class HomePage extends Component {
             </ul>
           </Col>
           <Col>
-            {this.state.selectedTables.length > 0 ? (
-              <>
-                <Form onSubmit={this.onSubmit} style={{ marginTop: "10px" }}>
+                {!this.state.open ? 
+                <Button onClick={(e) => {e.preventDefault(); this.setState(prevState => ({ open: !prevState.open
+                  }))}}> Log in
+                </Button> : 
+                <Form onSubmit={this.login}>
+                    <Form.Group controlId="formBasicEmail">
+                      <Form.Label>Email address</Form.Label>
+                      <Form.Control
+                          value={this.state.loginEmail}
+                          onChange={(e) => {
+                            e.stopPropagation();
+                            this.setState({ loginEmail: e.target.value });
+                          }}
+                          type="email"
+                          placeholder="Enter email"
+                      />
+                    </Form.Group>
+                    <Form.Group controlId="formBasicPassword" style={{marginBottom: '0.5rem'}}>
+                      <Form.Label>Password</Form.Label>
+                      <Form.Control
+                        value={this.state.password}
+                        onChange={(e) => this.setState({ password: e.target.value })}
+                        type="password"
+                        placeholder="Password"
+                      />
+                    </Form.Group>
+                    <input type="submit" value="login" style={{ borderRadius: "4px", padding: "7px", backgroundColor: "#9bd16e" }} />
+                  </Form>
+  }
+                  <Form onSubmit={this.onSubmit} style={{ marginTop: "10px" }}>
+                    <Form.Group className="mb-3">
+                      <Form.Label>Name</Form.Label>
+                      <Form.Control
+                        autoFocus
+                        type="text"
+                        name="name"
+                        onChange={this.handleChange}
+                        placeholder="Enter name"
+                      />
+                    </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label>Name</Form.Label>
+                    <Form.Label>Email</Form.Label>
                     <Form.Control
                       autoFocus
                       type="text"
-                      name="name"
+                      name="email"
+                      onChange={this.handleChange}
+                      placeholder="Enter Email"
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Phone</Form.Label>
+                    <Form.Control
+                      autoFocus
+                      type="number"
+                      name="phone"
                       onChange={this.handleChange}
                       placeholder="Enter name"
                     />
-                  </Form.Group>
+                    </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label>Diners</Form.Label>
                     <Form.Control
@@ -254,10 +348,6 @@ class HomePage extends Component {
                   </Form.Group>
                   <Button type="submit">Set Reservation</Button>
                 </Form>
-              </>
-            ) : (
-              <p>d</p>
-            )}
           </Col>
         </Row>
       </Container>
