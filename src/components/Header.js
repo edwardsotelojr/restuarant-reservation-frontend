@@ -1,6 +1,6 @@
 
 import React, { Component } from "react";
-//import Login from "./Login";
+import Login from "./Login";
 import {
   Navbar,
   Nav,
@@ -32,7 +32,7 @@ class Header extends Component {
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <Nav.Link href="/Signup">Sign Up</Nav.Link>
-             
+              <Nav.Link href="/Lignup">Login</Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>
