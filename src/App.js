@@ -15,7 +15,7 @@ class App extends Component {
   constructor(props){
     super()
     this.state = {
-      
+      user: {}
     }
   }
   componentDidMount(){
@@ -30,16 +30,15 @@ if (localStorage.jwtToken !== undefined) {
   setAuthToken(token);
   // Decode token and get user info and exp
   const decoded = jwt_decode(localStorage.jwtToken);
-  console.log('decoded ', decoded.user)
   // Set user and isAuthenticated
   //store.dispatch(setCurrentUser(decoded));
   // Check for expired token
-  console.log(decoded.exp);
   if(decoded.email != ""){
   axios.get("http://localhost:8000/getUser", {params: {email: decoded.email}})
   .then(res => {
       console.log(res)
-      this.setState({name: res.data.user.name, email: res.data.user.email, phone: res.data.user.phone})
+      this.setState({name: res.data.user.name, user: res.data.user,
+         email: res.data.user.email, phone: res.data.user.phone})
   })
   .catch(err => console.log(err))
   }
@@ -53,13 +52,17 @@ if (localStorage.jwtToken !== undefined) {
 }
 }
 
+updateProp = (user) =>{
+  this.setState({user: user})
+}
+
   render() {
     return (
       <Router history={history}>
-        <Header/>
+        <Header user={this.state.user}/>
         <div style={{marginTop: '52px'}}>
         <Switch>
-          <Route exact path="/" render={(props) => (<HomePage user={this.state}/>)}/>
+          <Route exact path="/" render={(props) => (<HomePage updateProp={this.updateProp} user={this.state}/>)}/>
           <Route path="/signup" component={Signup} />
           <Route path="/success" component={Success}/>
           <Route path="/user" component={UserPage}  />
