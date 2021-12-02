@@ -30,7 +30,7 @@ if (localStorage.jwtToken !== undefined) {
   setAuthToken(token);
   // Decode token and get user info and exp
   const decoded = jwt_decode(localStorage.jwtToken);
-  console.log('decoded ', decoded)
+  console.log('decoded ', decoded.user)
   // Set user and isAuthenticated
   //store.dispatch(setCurrentUser(decoded));
   // Check for expired token

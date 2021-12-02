@@ -82,18 +82,21 @@ class HomePage extends Component {
       loginEmail: "",
       phone: null,
       name: "",
+      BusyDay: false,
+      creditCardHold: null
     };
     this.login = this.login.bind(this);
     this.setTables = this.setTables.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidMount(){
-    this.setState({user: this.props.user})
-    if(Object.keys(this.props.user).length != 0){
-      this.setState({name: this.props.name, phone: this.props.phone, email: this.props.email})
+  componentDidUpdate(prevProps){
+    if (this.props.user !== prevProps.user) {
+          this.setState({user: this.props.user})
+      this.setState({name: this.props.user.name, phone: this.props.user.phone, email: this.props.user.email})
     }
   }
+
 
   getTableList = (d, t) => {
     this.setState({ timee: t.value, datee: d.value });
@@ -124,6 +127,7 @@ class HomePage extends Component {
       [e.target.name]: e.target.value,
     });
   }
+
   handleCheckboxChange = (event) => {
     let newArray = [...this.state.selectedTables, event.target.value];
     if (this.state.selectedTables.includes(event.target.value)) {
@@ -148,11 +152,18 @@ class HomePage extends Component {
     //  <li key={index}>{t}</li>
     //);
     this.setState({ tables: tablesAvailable });
+    if(this.state.tables.length > 10){
+      this.setState({ BusyDay: false });
+    }
+    else{
+      this.setState({ BusyDay: true });
+    }
   }
 
   onSubmit = (e) => {
     e.preventDefault();
-    const { name, diners, email, phone, selectedTables, timee, datee } =
+    const { name, diners, email, phone, selectedTables, timee, datee,
+    creditCardHold } =
       this.state;
     const reservation = {
       name,
@@ -162,6 +173,7 @@ class HomePage extends Component {
       tables: selectedTables,
       time: timee,
       date: datee,
+      creditCardHold
     };
     axios
       .post("http://localhost:8000/setReservation", reservation)
@@ -171,7 +183,8 @@ class HomePage extends Component {
           history.push("/success");
         }
       }) //
-      .catch((err) => console.log(err));
+      .catch((err) => {console.log(err)
+      this.setState({showError2: true, errMes: err.response.data.msg})});
   };
 
   login(e) {
@@ -191,7 +204,7 @@ class HomePage extends Component {
         setAuthToken(token);
         // Decode token to get user data
         const decoded = jwt_decode(token);
-        console.log("decoded ", decoded.user);
+        console.log("decoded ", decoded);
         // Set current user
         //dispatch(setCurrentUser(decoded.user))
         this.setState({
@@ -342,6 +355,7 @@ class HomePage extends Component {
                 )}
            
             <Form onSubmit={this.onSubmit} style={{ marginTop: "10px" }}>
+            {this.state.showError2 ? <Alert variant={"danger"}>{this.state.errMes}</Alert> : <></>}
               <Form.Group className="mb-3">
                 <Form.Label>Name</Form.Label>
                 <Form.Control
@@ -385,6 +399,20 @@ class HomePage extends Component {
                   placeholder="Enter Amount of Diners"
                 />
               </Form.Group>
+              {this.state.BusyDay ? (
+                <Form.Group className="mb-3">
+                <Form.Label>Credit Card</Form.Label>
+                <Form.Control
+                  autoFocus
+                  type="number"
+                  name="creditCardHold"
+                  onChange={this.handleChange}
+                  placeholder="Enter Credit Card Number"
+                />
+              </Form.Group>
+              ) : <></>}
+              
+
               <Button type="submit">Set Reservation</Button>
             </Form>
           </Col>
@@ -393,97 +421,4 @@ class HomePage extends Component {
     );
   }
 }
-
-/*
-
-
-
-function convertResponse(tablesTaken) {
-  var stringArray = [];
-  var str = "";
-  for (var i = 0; i < tablesTaken.length; i++) {
-    str = "t";
-    str = str + tablesTaken[i].toString();
-    stringArray.push(str);
-  }
-  return stringArray;
-}
-
-function HomePage() {
-  const [date, setDate] = useState(null);
-  const [time, setTime] = useState(null);
-  const [ta, setTa] = useState(null)
-
-   async function getTableList(d, t){
-    var tablesAvailable = []
-    const parameters = {
-      params: {
-        date: d.value,
-        time: t.value,
-      },
-    }; 
-    if(t.value.length != 0){
-      console.log(parameters)
-    const test = await axios
-      .get("http://localhost:8000/getAvailableTables", parameters)
-      .then((res) => {
-        //setTables(res.data.reservation)
-        console.log("res ",res)
-      })
-      .catch((err) => {
-        console.log(err)
-      });
-      return test
-    }
-  }
-
-  
-
-
-  return (
-    <Container>
-      <Row>
-        <Col>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <DesktopDatePicker
-              label="Select Date"
-              value={date}
-              onChange={(newValue) => {
-                setDate(newValue);
-                //setSelectedDate(getDate(date))
-              }}
-              renderInput={(params) => <TextField name={"dateValue"} {...params} />}
-            />
-          </LocalizationProvider>
-        </Col>
-        <Col>
-          <LocalizationProvider dateAdapter={AdapterDateFns}>
-            <TimePicker
-              label="Select Time"
-              value={time}
-              minutesStep={15}
-              onChange={(newValue) => {
-                setTime(newValue);
-              }}
-              renderInput={(params) => <TextField name={'timeValue'} {...params} />}
-            />
-          </LocalizationProvider>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-        Table of Available Tables
-              <ul>{date != null && time != null ? getTableList(document.getElementsByName("dateValue")[0], 
-              document.getElementsByName("timeValue")[0]) : <li>none</li>}</ul>
-        </Col>
-      </Row>
-      <Row>
-        <ul>
-          {ta}
-        </ul>
-      </Row>
-    </Container>
-  );
-}
-*/
 export default HomePage;
