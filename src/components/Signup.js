@@ -7,6 +7,8 @@ import {
   Row,
 } from "react-bootstrap";
 import axios from "axios"
+import history from "../history";
+import setAuthToken from "../utils/setAuthToken";
 
 class Signup extends Component {
   constructor() {
@@ -48,7 +50,15 @@ class Signup extends Component {
     .post("http://localhost:8000/signup", userData)
     .then(res => {
         console.log(res)
-        
+        axios.post("http://localhost:8000/login", {email, password})
+        .then(((res) => {
+          console.log(res);
+          const { token } = res.data;
+          localStorage.setItem("jwtToken", token);
+          // Set token to Auth header
+          setAuthToken(token);
+          history.push("/user")
+        }))
     }) //
     .catch(err =>
       console.log(err)

@@ -1,11 +1,12 @@
 import {
+  Alert,
   Container,
   Row,
   Col,
   InputGroup,
   FormControl,
   Button,
-  Form
+  Form,
 } from "react-bootstrap";
 import TextField from "@mui/material/TextField";
 import AdapterDateFns from "@mui/lab/AdapterDateFns";
@@ -17,8 +18,7 @@ import TimePicker from "@mui/lab/TimePicker";
 import { getDate } from "date-fns";
 import history from "../history";
 import setAuthToken from "../utils/setAuthToken";
-import jwt_decode from 'jwt-decode';
-
+import jwt_decode from "jwt-decode";
 
 const tables = {
   t1: 5,
@@ -69,25 +69,34 @@ let arrayOfTables = [
 class HomePage extends Component {
   constructor(props) {
     super(props);
-    console.log("props", this.props.user)
+    console.log("props", this.props.user);
     this.state = {
+      user: {},
       tables: [],
       date: "",
       time: "",
       selectedTables: [],
       open: false,
       password: "",
-      email: props.email,
+      email: "",
       loginEmail: "",
+      phone: null,
+      name: "",
     };
-    this.login = this.login.bind(this)
+    this.login = this.login.bind(this);
     this.setTables = this.setTables.bind(this);
-    this.handleChange = this.handleChange.bind(this)
+    this.handleChange = this.handleChange.bind(this);
   }
 
+  componentDidMount(){
+    this.setState({user: this.props.user})
+    if(Object.keys(this.props.user).length != 0){
+      this.setState({name: this.props.name, phone: this.props.phone, email: this.props.email})
+    }
+  }
 
   getTableList = (d, t) => {
-    this.setState({timee: t.value, datee: d.value})
+    this.setState({ timee: t.value, datee: d.value });
     var tablesAvailable = [];
     //console.log(d.value)
     //console.log(t.value)
@@ -110,12 +119,10 @@ class HomePage extends Component {
     }
   };
 
-
   handleChange(e) {
     this.setState({
       [e.target.name]: e.target.value,
     });
-
   }
   handleCheckboxChange = (event) => {
     let newArray = [...this.state.selectedTables, event.target.value];
@@ -130,8 +137,8 @@ class HomePage extends Component {
   setTables(res) {
     var tablesAvailable = arrayOfTables;
     var tablesTaken = res;
-    console.log("tables available: ", tablesAvailable)
-    console.log("tables taken: ", tablesTaken)
+    console.log("tables available: ", tablesAvailable);
+    console.log("tables taken: ", tablesTaken);
     for (var i = 0; i < tablesTaken.length; i++) {
       // go through array of tables and remove taken tables
       tablesAvailable = tablesAvailable.filter((ta) => ta !== tablesTaken[i]);
@@ -145,70 +152,68 @@ class HomePage extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    const {
+    const { name, diners, email, phone, selectedTables, timee, datee } =
+      this.state;
+    const reservation = {
       name,
-      diners,
       email,
       phone,
-      selectedTables,
-      timee,
-      datee
-    } = this.state;
-    const reservation = {
-        name,
-        email,
-        phone,
-        diners: parseInt(diners),
-        tables: selectedTables,
-        time: timee,
-        date: datee
-    }
+      diners: parseInt(diners),
+      tables: selectedTables,
+      time: timee,
+      date: datee,
+    };
     axios
-    .post("http://localhost:8000/setReservation", reservation)
-    .then(res => {
-        console.log(res)
-        if(res.status == 200){
-          history.push("/success")
+      .post("http://localhost:8000/setReservation", reservation)
+      .then((res) => {
+        console.log(res);
+        if (res.status == 200) {
+          history.push("/success");
         }
-        
-    }) //
-    .catch(err =>
-      console.log(err)
-    );
+      }) //
+      .catch((err) => console.log(err));
   };
 
-  login(e){
-    e.preventDefault()
-    console.log("here")
+  login(e) {
+    e.preventDefault();
+    console.log("here");
     const user = {
-      loginEmail: this.state.loginEmail,
-      password: this.state.password
-    }
+      email: this.state.loginEmail,
+      password: this.state.password,
+    };
     axios
-    .post("http://localhost:8000/login", user)
-    .then(res => { 
-      console.log(res)
-      const { token } = res.data;
+      .post("http://localhost:8000/login", user)
+      .then((res) => {
+        console.log(res);
+        const { token } = res.data;
         localStorage.setItem("jwtToken", token);
         // Set token to Auth header
         setAuthToken(token);
         // Decode token to get user data
         const decoded = jwt_decode(token);
-        console.log("decoded ",decoded.user)
+        console.log("decoded ", decoded.user);
         // Set current user
         //dispatch(setCurrentUser(decoded.user))
-        this.setState({email: this.state.loginEmail,
-        name: res.data.message.name,
-      phone: res.data.message.phone
-    })
-    })
-    .catch(err => {console.log(err)})
+        this.setState({
+          email: this.state.loginEmail,
+          name: res.data.message.name,
+          phone: res.data.message.phone,
+          showError: false,
+          errMes: ""
+        });
+      })
+      .catch((err) => {
+        console.log("err", err.response);
+        this.setState({showError: true, errMes: err.response.data.msg})
+      });
   }
 
-  logout(){
+  logout() {
+    console.log("logout")
     localStorage.removeItem("jwtToken");
     // Remove auth header for future requests
     setAuthToken(false);
+    this.setState({user: {}, name: "", email: "", phone: null})
   }
 
   render() {
@@ -276,78 +281,112 @@ class HomePage extends Component {
             </ul>
           </Col>
           <Col>
-                {!this.state.open ? 
-                <Button onClick={(e) => {e.preventDefault(); this.setState(prevState => ({ open: !prevState.open
-                  }))}}> Log in
-                </Button> : 
-                <Form onSubmit={this.login}>
-                    <Form.Group controlId="formBasicEmail">
-                      <Form.Label>Email address</Form.Label>
-                      <Form.Control
-                          value={this.state.loginEmail}
-                          onChange={(e) => {
-                            e.stopPropagation();
-                            this.setState({ loginEmail: e.target.value });
-                          }}
-                          type="email"
-                          placeholder="Enter email"
-                      />
-                    </Form.Group>
-                    <Form.Group controlId="formBasicPassword" style={{marginBottom: '0.5rem'}}>
-                      <Form.Label>Password</Form.Label>
-                      <Form.Control
-                        value={this.state.password}
-                        onChange={(e) => this.setState({ password: e.target.value })}
-                        type="password"
-                        placeholder="Password"
-                      />
-                    </Form.Group>
-                    <input type="submit" value="login" style={{ borderRadius: "4px", padding: "7px", backgroundColor: "#9bd16e" }} />
-                  </Form>
-  }
-                  <Form onSubmit={this.onSubmit} style={{ marginTop: "10px" }}>
-                    <Form.Group className="mb-3">
-                      <Form.Label>Name</Form.Label>
-                      <Form.Control
-                        autoFocus
-                        type="text"
-                        name="name"
-                        onChange={this.handleChange}
-                        placeholder="Enter name"
-                      />
-                    </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control
-                      autoFocus
-                      type="text"
-                      name="email"
-                      onChange={this.handleChange}
-                      placeholder="Enter Email"
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Phone</Form.Label>
-                    <Form.Control
-                      autoFocus
-                      type="number"
-                      name="phone"
-                      onChange={this.handleChange}
-                      placeholder="Enter name"
-                    />
-                    </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Diners</Form.Label>
-                    <Form.Control
-                      autoFocus
-                      type="number"
-                      name="diners"
-                      onChange={this.handleChange}
-                      placeholder="Enter Amount of Diners"
-                    />
-                  </Form.Group>
-                  <Button type="submit">Set Reservation</Button>
-                </Form>
+                {Object.keys(this.state.user).length == 0 // if no user is logged in
+                 ? [(!this.state.open ? 
+                  <Button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      this.setState((prevState) => ({ open: !prevState.open }));
+                    }}
+                  >
+                    {" "}
+                    Log in
+                  </Button>
+     :   <Form onSubmit={this.login}>
+       {this.state.showError ? <Alert variant={"danger"}>{this.state.errMes}</Alert> : <></>}
+     <Form.Group controlId="formBasicEmail">
+       <Form.Label>Email address</Form.Label>
+       <Form.Control
+         value={this.state.loginEmail}
+         onChange={(e) => {
+           e.stopPropagation();
+           this.setState({ loginEmail: e.target.value });
+         }}
+         type="email"
+         placeholder="Enter email"
+       />
+     </Form.Group>
+     <Form.Group
+       controlId="formBasicPassword"
+       style={{ marginBottom: "0.5rem" }}
+     >
+       <Form.Label>Password</Form.Label>
+       <Form.Control
+         value={this.state.password}
+         onChange={(e) =>
+           this.setState({ password: e.target.value })
+         }
+         type="password"
+         placeholder="Password"
+       />
+     </Form.Group>
+     <input
+       type="submit"
+       value="login"
+       style={{
+         borderRadius: "4px",
+         padding: "7px",
+         backgroundColor: "#9bd16e",
+       }}
+     />
+   </Form>)] : (
+                <Button
+                onClick={(e) => {
+                  e.preventDefault();
+                  this.logout()
+                }}
+              >
+                {" "}
+                Log in
+              </Button>
+                )}
+           
+            <Form onSubmit={this.onSubmit} style={{ marginTop: "10px" }}>
+              <Form.Group className="mb-3">
+                <Form.Label>Name</Form.Label>
+                <Form.Control
+                  autoFocus
+                  value={this.state.name}
+                  type="text"
+                  name="name"
+                  onChange={this.handleChange}
+                  placeholder="Enter name"
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  autoFocus
+                  type="text"
+                  value={this.state.email}
+                  name="email"
+                  onChange={this.handleChange}
+                  placeholder="Enter Email"
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Phone</Form.Label>
+                <Form.Control
+                  autoFocus
+                  type="number"
+                  value={this.state.phone}
+                  name="phone"
+                  onChange={this.handleChange}
+                  placeholder="Enter name"
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Diners</Form.Label>
+                <Form.Control
+                  autoFocus
+                  type="number"
+                  name="diners"
+                  onChange={this.handleChange}
+                  placeholder="Enter Amount of Diners"
+                />
+              </Form.Group>
+              <Button type="submit">Set Reservation</Button>
+            </Form>
           </Col>
         </Row>
       </Container>
