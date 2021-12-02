@@ -7,6 +7,7 @@ import {
   Container,
   Button
 } from "react-bootstrap";
+import history from "../history";
 import setAuthToken from "../utils/setAuthToken";
 class Header extends Component {
   constructor(props){
@@ -45,7 +46,7 @@ islogged(){
     localStorage.removeItem("jwtToken");
     // Remove auth header for future requests
     setAuthToken(false);
-    this.setState({user: {}, name: "", email: "", phone: null})
+    this.setState({ user: {}, name: "", email: "", phone: null})
   }
   render() {
     return (
@@ -61,6 +62,7 @@ islogged(){
               <>
               <Button onClick={(e) => {
                       e.preventDefault();
+                      history.push("/user");
                       console.log(this.state.user.name);
                     }}>{this.state.user.name}
                 </Button> <Button onClick={(e) => {

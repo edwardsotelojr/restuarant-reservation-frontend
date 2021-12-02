@@ -1,54 +1,46 @@
-
+import axios from "axios";
 import React, { Component } from "react";
-import {
-  Container, Row
-} from "react-bootstrap";
-import axios from "axios"
-import setAuthToken  from "../utils/setAuthToken";
-import jwt_decode from "jwt-decode"
+import { Container, Row } from "react-bootstrap";
 class UserPage extends Component {
-  
-constructor(props){
+  constructor(props) {
     super(props);
-}
-  componentDidMount() {
-      this.log()
+    this.state = {
+    reservations: []
   }
+}
 
-  log(){
-    // Check for token to keep user logged in
-    if (localStorage.jwtToken !== undefined) {
-      console.log("token founded: ", localStorage.jwtToken);
-      // Set auth token header auth
-      const token = localStorage.jwtToken;
-      setAuthToken(token);
-      // Decode token and get user info and exp
-      const decoded = jwt_decode(localStorage.jwtToken);
-      console.log('decoded ', decoded)
-      // Set user and isAuthenticated
-      //store.dispatch(setCurrentUser(decoded));
-      // Check for expired token
-      console.log(decoded.exp);
-      if(decoded.email != ""){
-      axios.get("http://localhost:8000/getUser", {params: {email: decoded.email}})
-      .then(res => {
-          console.log(res)
-          this.setState({name: res.data.user.name, email: res.data.user.email, phone: res.data.user.phone})
-      })
-      .catch(err => console.log(err))
-      }
-    }
-    }
+componentDidMount(){
+  this.getReservations()
+}
+
+  getReservations(){
+    const para = {email: this.props.user.email}
+    axios.get("http://localhost:8000/getReservations", para)
+    .then(res => this.setState({reservations: res.data.reservations}))
+  }
 
   render() {
     return (
-        <Container>
-          <Row>
-              <p>
-                  lol
-              </p>
-          </Row>
-        </Container>
+      <Container>
+        <Row>
+          <p>Name: {this.props.user.name}</p>
+          <p>Email: {this.props.user.email}</p>
+          <p>Phone Number: {this.props.user.phone}</p>
+          <p>Mailing Address: {this.props.user.user.mailingAddress}</p>
+          <p>Billing Address: {this.props.user.user.billingAddress}</p>
+          <p>Preferred Amount of Diners: {this.props.user.user.preferredAmountOfDiners}</p>
+        </Row>
+        <Row >
+          Reservations:
+          {this.state.reservations.map((rr, index) => 
+            <div key={index} 
+            style={{backgroundColor: "gray", margin: "2px", padding: "3px", width: "max-content"}}><p>date: {rr.date}</p>
+            <p>time: {rr.time}</p>
+            <p>Amount of Diners: {rr.diners}</p>
+            <p>tables: {rr.tables}</p></div>
+          )}
+        </Row>
+      </Container>
     );
   }
 }

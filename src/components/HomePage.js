@@ -93,7 +93,6 @@ class HomePage extends Component {
   componentDidUpdate(prevProps){
     if (this.props.user !== prevProps.user) {
           this.setState({user: this.props.user})
-      this.setState({name: this.props.user.name, phone: this.props.user.phone, email: this.props.user.email})
     }
   }
 
@@ -180,7 +179,7 @@ class HomePage extends Component {
       .then((res) => {
         console.log(res);
         if (res.status == 200) {
-          history.push("/success");
+          history.push({pathname: "/success", state: { tables: selectedTables, name: name, date: datee, time: timee, diners: diners }});
         }
       }) //
       .catch((err) => {console.log(err)
@@ -197,7 +196,7 @@ class HomePage extends Component {
     axios
       .post("http://localhost:8000/login", user)
       .then((res) => {
-        console.log(res);
+        console.log(res.data.message.name);
         const { token } = res.data;
         localStorage.setItem("jwtToken", token);
         // Set token to Auth header
@@ -209,19 +208,19 @@ class HomePage extends Component {
         //dispatch(setCurrentUser(decoded.user))
         this.setState({
           user: res.data.message,
-          email: this.state.loginEmail,
           name: res.data.message.name,
-          phone: res.data.message.phone,
-          showError: false,
-          errMes: ""
-        });
+          email: res.data.message.email,
+          phone: res.data.message.phone
+        })
         this.props.updateProp(this.state.user)
+       
       })
       .catch((err) => {
-        console.log("err", err.response);
+        console.log("errrr", err.response);
         this.setState({showError: true, errMes: err.response.data.msg})
       });
   }
+
 
   logout() {
     console.log("logout")
@@ -362,7 +361,7 @@ class HomePage extends Component {
                 <Form.Label>Name</Form.Label>
                 <Form.Control
                   autoFocus
-                  value={this.state.name}
+                  value={this.state.name|| ''}
                   type="text"
                   name="name"
                   onChange={this.handleChange}
@@ -374,7 +373,7 @@ class HomePage extends Component {
                 <Form.Control
                   autoFocus
                   type="text"
-                  value={this.state.email}
+                  value={this.state.email|| ''}
                   name="email"
                   onChange={this.handleChange}
                   placeholder="Enter Email"
@@ -385,7 +384,7 @@ class HomePage extends Component {
                 <Form.Control
                   autoFocus
                   type="number"
-                  value={this.state.phone}
+                  value={this.state.phone|| ''}
                   name="phone"
                   onChange={this.handleChange}
                   placeholder="Enter name"

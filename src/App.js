@@ -15,7 +15,6 @@ class App extends Component {
   constructor(props){
     super()
     this.state = {
-      user: {}
     }
   }
   componentDidMount(){
@@ -53,7 +52,7 @@ if (localStorage.jwtToken !== undefined) {
 }
 
 updateProp = (user) =>{
-  this.setState({user: user})
+  this.setState({user})
 }
 
   render() {
@@ -65,7 +64,7 @@ updateProp = (user) =>{
           <Route exact path="/" render={(props) => (<HomePage updateProp={this.updateProp} user={this.state}/>)}/>
           <Route path="/signup" component={Signup} />
           <Route path="/success" component={Success}/>
-          <Route path="/user" component={UserPage}  />
+          <Route path="/user" render={(props) => (<UserPage user={this.state}/>)} />
         </Switch>
         
         </div>

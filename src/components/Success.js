@@ -13,9 +13,9 @@ class Success extends Component {
     return (
         <Container>
           <Row>
-              <p>
-                  Success
-              </p>
+              <h3>
+                  Table is set for {this.props.location.state.name}, table of {this.props.location.state.diners} on {this.props.location.state.date} at {this.props.location.state.time}.
+              </h3>
           </Row>
         </Container>
     );
