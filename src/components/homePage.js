@@ -1,4 +1,4 @@
-import {//hi
+import {
   Container,
   Row,
   Col,
@@ -277,6 +277,7 @@ class HomePage extends Component {
           </Col>
           <Col>
                 {!this.state.open ? 
+              
                 <Button onClick={(e) => {e.preventDefault(); this.setState(prevState => ({ open: !prevState.open
                   }))}}> Log in
                 </Button> : 
@@ -304,7 +305,11 @@ class HomePage extends Component {
                     </Form.Group>
                     <input type="submit" value="login" style={{ borderRadius: "4px", padding: "7px", backgroundColor: "#9bd16e" }} />
                   </Form>
-  }
+                } 
+                &nbsp;<Button onClick={(e) => {e.preventDefault(); this.setState(prevState => ({ open: !prevState.open
+                            }))}}> Sign up
+                </Button>
+
                   <Form onSubmit={this.onSubmit} style={{ marginTop: "10px" }}>
                     <Form.Group className="mb-3">
                       <Form.Label>Name</Form.Label>
