@@ -64,45 +64,12 @@ function convertResponse(tablesTaken) {
   return stringArray;
 }
 
-function convertTime(timee){
-  if(parseInt(timee.substring(0,2)) > 12){
-    return "pm"
-  }
-}
-
-function getTakenTables(date, time) {
-  var tablesAvailable = [];
-  const parameters = {
-    params: {
-      date: "4/30/1002",
-      time: "4:00",
-    },
-  };
-  axios
-    .get("http://localhost:8000/getAvailableTables", parameters)
-    .then((res) => {
-      tablesAvailable = arrayOfTables;
-      tablesTaken = res.data.reservation;
-      var tablesTaken = convertResponse(tablesTaken);
-      for (var i = 0; i < tablesTaken.length; i++) {
-        // go through array of tables and remove taken tables
-        tablesAvailable = tablesAvailable.filter((ta) => ta !== tablesTaken[i]);
-      }
-      console.log(tablesAvailable)
-      return tablesAvailable;
-    })
-    .catch((err) => {
-      return [];
-    });
-}
-
 
 function HomePage() {
   const [date, setDate] = useState(null);
   const [time, setTime] = useState(null);
 
-  const [datee, setDatee] = useState(null);
-  const [timee, setTimee] = useState(null);
+  const [tables, setTables] = useState(null);
 
   function getTableList(d, t){
     var tablesAvailable = []
@@ -111,7 +78,8 @@ function HomePage() {
         date: d.value,
         time: t.value,
       },
-    }; 
+    };
+    const lis = <li>called</li>
     if(t.value.length != 0){
       console.log(parameters)
     axios
@@ -126,17 +94,18 @@ function HomePage() {
           tablesAvailable = tablesAvailable.filter((ta) => ta !== tablesTaken[i]);
         }
         console.log(tablesAvailable)
+        lis = tablesAvailable.map((t,index) => 
+          <li key={index}>{t}</li>
+        );
       })
       .catch((err) => {
         console.log(err)
       });
     }
+    return lis
   }
 
-  function getDate(){
-    return document.getElementsByName("dateValue")[0].value;
-  }
-
+  
   return (
     <Container>
       <Row>
@@ -169,19 +138,17 @@ function HomePage() {
       </Row>
       <Row>
         <Col>
-          <p>Selected Date: {}</p>
-          <p>
-            Selected Time:{" "}
-            {time != null ? document.getElementsByName("timeValue")[0].value : "lol"}
-          </p>
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-              {date != null && time != null ? getTableList(document.getElementsByName("dateValue")[0], document.getElementsByName("timeValue")[0]) : "not null"}
+        Table of Available Tables
+              <ul>{date != null && time != null ? getTableList(document.getElementsByName("dateValue")[0], 
+              document.getElementsByName("timeValue")[0]) : <li>none</li>}</ul>
         </Col>
       </Row>
     </Container>
   );
 }
+<<<<<<< HEAD
 export default HomePage;
+=======
+
+export default HomePage;
+>>>>>>> 49fdee9... update from render
