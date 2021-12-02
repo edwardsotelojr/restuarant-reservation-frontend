@@ -8,19 +8,8 @@ import { Component } from "react";
 import history from "./history";
 import setAuthToken from "./utils/setAuthToken";
 import Header from "./components/Header"
-import Success from "./components/Success";
-import axios from "axios";
-class App extends Component {
-  constructor(props){
-    super()
-    this.state = {
-      
-    }
-  }
-  componentDidMount(){
-    this.log()
-  }
-log(){
+
+//const store = makeStore();
 // Check for token to keep user logged in
 if (localStorage.jwtToken !== undefined) {
   console.log("token founded: ", localStorage.jwtToken);
@@ -34,14 +23,6 @@ if (localStorage.jwtToken !== undefined) {
   //store.dispatch(setCurrentUser(decoded));
   // Check for expired token
   console.log(decoded.exp);
-  if(decoded.email != ""){
-  axios.get("http://localhost:8000/getUser", {params: {email: decoded.email}})
-  .then(res => {
-      console.log(res)
-      this.setState({name: res.data.user.name, email: res.data.user.email, phone: res.data.user.phone})
-  })
-  .catch(err => console.log(err))
-  }
   //const currentTime = Date.now() / 1000; // to get in milliseconds
   //if (decoded.exp < currentTime) {
     // Logout user
@@ -50,17 +31,16 @@ if (localStorage.jwtToken !== undefined) {
     //window.location.href = "./login";
   //}
 }
-}
-
+class App extends Component {
   render() {
     return (
       <Router history={history}>
         <Header/>
         <div style={{marginTop: '52px'}}>
         <Switch>
-          <Route exact path="/" component={HomePage} user={"i"}/>
+          <Route exact path="/" component={HomePage} />
           <Route path="/signup" component={Signup} />
-          <Route path="/success" component={Success}/>
+
         </Switch>
         
         </div>
