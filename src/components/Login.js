@@ -8,6 +8,7 @@ import {
 } from "react-bootstrap";
 import axios from "axios"
 
+<<<<<<< HEAD
 class Login extends Component {
   constructor() {
     super();
@@ -90,3 +91,5 @@ class Login extends Component {
   }
 }
 export default Login;
+=======
+>>>>>>> 8555b0c... update login
