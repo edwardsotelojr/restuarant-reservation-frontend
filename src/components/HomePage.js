@@ -20,6 +20,10 @@ import history from "../history";
 import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
 
+import { Formik } from "formik";
+import * as EmailValidator from "email-validator"; // used when validating with a self-implemented approach
+import * as Yup from "yup"; // used when validating with a pre-built solution
+
 const tables = {
   t1: 5,
   t2: 5,
@@ -88,6 +92,7 @@ class HomePage extends Component {
     this.login = this.login.bind(this);
     this.setTables = this.setTables.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.setAlertMessage();
   }
 
   componentDidUpdate(prevProps){
@@ -138,6 +143,10 @@ class HomePage extends Component {
     });
   };
 
+  setAlertMessage(message) {
+    this.setState({ alertMessage: message });
+  }
+
   setTables(res) {
     var tablesAvailable = arrayOfTables;
     var tablesTaken = res;
@@ -162,6 +171,7 @@ class HomePage extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
+    this.setAlertMessage();
     const { name, diners, email, phone, selectedTables, timee, datee,
     creditCardHold } =
       this.state;
@@ -184,11 +194,13 @@ class HomePage extends Component {
         }
       }) //
       .catch((err) => {console.log(err)
-      this.setState({showError2: true, errMes: err.response.data.msg})});
+      this.setState({showError2: true, errMes: err.response.data.msg})
+      this.setAlertMessage(err.message)});
   };
 
   login(e) {
     e.preventDefault();
+    this.setAlertMessage();
     console.log("here");
     const user = {
       email: this.state.loginEmail,
@@ -218,6 +230,7 @@ class HomePage extends Component {
       .catch((err) => {
         console.log("err", err.response);
         this.setState({showError: true, errMes: err.response.data.msg})
+        this.setAlertMessage(err.message);
       });
   }
 
@@ -233,6 +246,7 @@ class HomePage extends Component {
     //console.log(this.props)
     return (
       <Container>
+        <Alert message={this.state.alertMessage} />
         <Row>
           <Col>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -314,6 +328,7 @@ class HomePage extends Component {
          onChange={(e) => {
            e.stopPropagation();
            this.setState({ loginEmail: e.target.value });
+
          }}
          type="email"
          placeholder="Enter email"
@@ -421,4 +436,7 @@ class HomePage extends Component {
     );
   }
 }
+
+
+
 export default HomePage;
