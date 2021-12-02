@@ -23,7 +23,8 @@
     "web-vitals": "^1.0.1",
     "yup": "^0.32.11",
     "email-validator": "^2.0.4",
-    "formik": "^2.2.9"
+    "formik": "^2.2.9",
+    "@userfront/core": "^0.2.33"
   },
   "scripts": {
     "start": "BROWSER='firefox developer edition' react-scripts start",
