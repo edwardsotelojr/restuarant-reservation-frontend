@@ -37,10 +37,14 @@ class Header extends Component {
             <Nav className="me-auto">
               <Nav.Link href="/Signup">Sign Up</Nav.Link>
 <<<<<<< HEAD
+<<<<<<< HEAD
               <Nav.Link href="/Lignup">Login</Nav.Link>
 =======
              
 >>>>>>> a772c16... hi
+=======
+              <Nav.Link href="/Login">Login</Nav.Link>
+>>>>>>> bef22c9... add link/login format
             </Nav>
           </Navbar.Collapse>
         </Container>

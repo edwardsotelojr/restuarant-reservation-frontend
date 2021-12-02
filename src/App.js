@@ -2,6 +2,7 @@ import React from "react";
 import "./index.css";
 import HomePage from "./components/HomePage";
 import Signup from "./components/Signup";
+import Login from "./components/Login";
 import { Router, Route, Switch } from "react-router-dom";
 import jwt_decode from "jwt-decode";
 import { Component } from "react";
@@ -40,7 +41,7 @@ class App extends Component {
         <Switch>
           <Route exact path="/" component={HomePage} />
           <Route path="/signup" component={Signup} />
-
+          <Route path="/login" component={Login} />
         </Switch>
         
         </div>

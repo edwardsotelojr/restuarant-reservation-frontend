@@ -9,6 +9,9 @@ import {
 import axios from "axios"
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bef22c9... add link/login format
 class Login extends Component {
   constructor() {
     super();
@@ -54,13 +57,21 @@ class Login extends Component {
       <Row>
           <Form onSubmit={this.onSubmit} style={{ marginTop: "10px" }}>
             <Form.Group className="mb-3">
+<<<<<<< HEAD
               <Form.Label>Username</Form.Label>
+=======
+              <Form.Label>Name</Form.Label>
+>>>>>>> bef22c9... add link/login format
               <Form.Control
                 autoFocus
                 type="text"
                 name="name"
                 onChange={this.handleChange}
+<<<<<<< HEAD
                 placeholder="Enter username"
+=======
+                placeholder="Enter name"
+>>>>>>> bef22c9... add link/login format
               />
             </Form.Group>
             <Form.Group className="mb-3">
@@ -69,6 +80,7 @@ class Login extends Component {
                 type="text"
                 name="password"
                 onChange={this.handleChange}
+<<<<<<< HEAD
                 placeholder="Enter password"
               />
             </Form.Group>
@@ -81,6 +93,12 @@ class Login extends Component {
         label="Remeber Me"
         />
       </Col>
+=======
+                placeholder="Enter Password"
+              />
+            </Form.Group>
+
+>>>>>>> bef22c9... add link/login format
       <Button variant="primary" type="submit">
               Login
             </Button>
@@ -90,6 +108,10 @@ class Login extends Component {
     )
   }
 }
+<<<<<<< HEAD
 export default Login;
 =======
 >>>>>>> 8555b0c... update login
+=======
+export default Login;
+>>>>>>> bef22c9... add link/login format
