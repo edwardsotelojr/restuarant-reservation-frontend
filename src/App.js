@@ -9,6 +9,7 @@ import history from "./history";
 import setAuthToken from "./utils/setAuthToken";
 import Header from "./components/Header"
 import Success from "./components/Success";
+import UserPage from "./components/UserPage"
 import axios from "axios";
 class App extends Component {
   constructor(props){
@@ -58,9 +59,10 @@ if (localStorage.jwtToken !== undefined) {
         <Header/>
         <div style={{marginTop: '52px'}}>
         <Switch>
-          <Route exact path="/" component={HomePage} user={"i"}/>
+          <Route exact path="/" render={(props) => (<HomePage user={this.state}/>)}/>
           <Route path="/signup" component={Signup} />
           <Route path="/success" component={Success}/>
+          <Route path="/user" component={UserPage}  />
         </Switch>
         
         </div>
