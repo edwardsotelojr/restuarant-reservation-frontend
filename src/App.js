@@ -11,6 +11,7 @@ import Header from "./components/Header"
 import Success from "./components/Success";
 import UserPage from "./components/UserPage"
 import axios from "axios";
+
 class App extends Component {
   constructor(props){
     super()
@@ -61,7 +62,7 @@ updateProp = (user) =>{
         <Header user={this.state.user}/>
         <div style={{marginTop: '52px'}}>
         <Switch>
-          <Route exact path="/" render={(props) => (<HomePage updateProp={this.updateProp} user={this.state}/>)}/>
+          <Route exact path="/" render={(props) => (<HomePage  updateProp={this.updateProp} user={this.state}/>)}/>
           <Route path="/signup" component={Signup} />
           <Route path="/success" component={Success}/>
           <Route path="/user" render={(props) => (<UserPage user={this.state}/>)} />

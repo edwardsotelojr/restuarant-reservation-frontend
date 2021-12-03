@@ -9,6 +9,8 @@ import {
 import axios from "axios"
 import history from "../history";
 import setAuthToken from "../utils/setAuthToken";
+import Userfront from "@userfront/core";
+Userfront.init("demo1234");
 
 class Signup extends Component {
   constructor() {
@@ -20,14 +22,17 @@ class Signup extends Component {
       phone: "",
       mailingAddress: "",
       billingAddress: "",
-      preferredAmountOfDiners: ""
+      preferredAmountOfDiners: "",
+      alertMessage: ""
+
     };
     this.handleChange = this.handleChange.bind(this);
 
+    this.setAlertMessage = this.setAlertMessage.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  onSubmit = (e) => {
-    e.preventDefault();
+  onSubmit = () => {
     const {
       name,
       email,
@@ -60,8 +65,10 @@ class Signup extends Component {
           history.push("/user")
         }))
     }) //
-    .catch(err =>
+    .catch(err =>{
+      this.setAlertMessage(err.message);
       console.log(err)
+    }
     );
   };
 
@@ -72,11 +79,104 @@ class Signup extends Component {
 
   }
 
+  handleSubmit(event) {
+    event.preventDefault();
+    // Reset the alert to empty
+    this.setAlertMessage();
+    
+    let nameError = '';
+    let passError = '';
+    let emailError = '';
+    let mailError = '';
+    let billError = '';
+    let phoneError = '';
+    let emailinvalidError ='';
+    let phoneinvalidError = '';
+    let dineError = '';
+    let array = [];
+    let hi = false;
+    
+    if (this.state.name == "") {
+      nameError = 'Name cannot be blank!';
+      hi=true;
+    }else{
+      hi = false
+    }
+    if (this.state.password == "") {
+      passError = 'Password cannot be blank!';
+      hi=true;
+    }else{
+      hi = false
+    }
+    if (this.state.email == "") {
+      emailError = 'Mail cannot be blank!';
+      hi=true;
+    }else{
+      hi = false
+    }
+    if (this.state.phone == "") {
+      phoneError = 'Phone numbercannot be blank!';
+      hi=true;
+    }else{
+      hi = false
+    }
+    if (this.state.email == "") {
+      emailError = 'Email cannot be blank!';
+
+      var emailformat = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      if (!emailformat.test(this.state.email)) {
+        emailinvalidError = 'Incorrect email format!';
+      }
+      hi=true;
+    }else{
+      hi = false
+    }
+    if (this.state.phone !== 'undefined'){
+      var phoneformat = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/;
+      if (!phoneformat.test(this.state.phone)) {
+        phoneinvalidError = 'Incorrect phone format!';
+      }
+      hi = true;
+    }else{
+      hi = false
+    }
+    if (this.state.billingAddress == "") {
+      billError = 'Billing address cannot be blank!';
+      hi=true;
+    }else{
+      hi = false
+    }
+    if (this.state.preferredAmountOfDiners == "" ||  this.state.preferredAmountOfDiners <= 0) {
+      dineError = 'Preferred Amount Of Diners neannot be blank!';
+      if (this.state.preferredAmountOfDiners <= 0) {
+        dineError = 'Incorrect amount of diners!'
+      }
+      hi=true;
+    }else{
+      hi = false
+    }
+
+    if (hi == true) {
+      return this.setAlertMessage("ALERT:" + " " + nameError + " "+ emailError + " " + emailinvalidError+" "+ passError + " "+ phoneError + " " + phoneinvalidError+" " + mailError+ " "+ billError + " "+ dineError);
+      hi = false;
+      this.setAlertMessage();
+    }
+      this.setAlertMessage();
+      this.onSubmit();
+
+  }
+
+  setAlertMessage(message) {
+    this.setState({ alertMessage: message });
+  }
+
   render() {
       return(
     <Container>
       <Row>
-          <Form onSubmit={this.onSubmit} style={{ marginTop: "10px" }}>
+          <Form onSubmit={this.handleSubmit} style={{ marginTop: "10px" }}>
+          <Alert message={this.state.alertMessage}/>
+
             <Form.Group className="mb-3">
               <Form.Label>Name</Form.Label>
               <Form.Control
@@ -158,6 +258,15 @@ class Signup extends Component {
       </Row>
     </Container>
     )
+  }
+}
+class Alert extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    if (!this.props.message) return "";
+    return <div id="alert">{this.props.message}</div>;
   }
 }
 export default Signup;
