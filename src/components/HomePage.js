@@ -88,6 +88,8 @@ class HomePage extends Component {
     this.login = this.login.bind(this);
     this.setTables = this.setTables.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.setAlertMessage();
+    this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   componentDidUpdate(prevProps){
@@ -122,11 +124,59 @@ class HomePage extends Component {
   };
 
   handleChange(e) {
+    e.preventDefault();
+    const target = e.target;
     this.setState({
       [e.target.name]: e.target.value,
     });
   }
+   handleSubmit(event) {
+    event.preventDefault();
+    // Reset the alert to empty
+    this.setAlertMessage();
 
+    let nameError = '';
+    let emailError = '';
+    let phoneError = '';
+    let emailinvalidError ='';
+    let phoneinvalidError = '';
+    let dineError = '';
+    let hi = false;
+
+    if (this.state.name == "") {
+      nameError = 'Name cannot be blank!';
+      hi=true;
+    }
+    if (this.state.email == "") {
+      emailError = 'Email cannot be blank!';
+
+      var emailformat = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      if (!emailformat.test(this.state.email)) {
+        emailinvalidError = 'Incorrect email format!';
+      }
+      hi=true;
+    }
+    if (this.state.phone !== 'undefined'){
+      var phoneformat = /^[(]{0,1}[0-9]{3}[)]{0,1}[-\s\.]{0,1}[0-9]{3}[-\s\.]{0,1}[0-9]{4}$/;
+      if (!phoneformat.test(this.state.phone)) {
+        phoneinvalidError = 'Incorrect phone format!';
+      }
+      hi = true;
+    }
+    /*if (this.state.preferredAmountOfDiners <= 0 || this.state.preferredAmountOfDiners !== 'undefined') {
+      dineError = 'Preferred Amount Of Diners eannot be blank!';
+      if (this.state.preferredAmountOfDiners <= 0) {
+        dineError = 'Incorrect amount of diners!'
+      }
+      hi=true;
+    }*/
+
+    if (hi == true) {
+      return this.setAlertMessage("ALERT:" + " " + nameError + " "+ emailError + " "+ emailinvalidError+ " "+phoneError + " "+ phoneinvalidError+" "+ dineError);
+    }
+    hi=false;
+    this.setAlertMessage()
+  }
   handleCheckboxChange = (event) => {
     let newArray = [...this.state.selectedTables, event.target.value];
     if (this.state.selectedTables.includes(event.target.value)) {
@@ -136,7 +186,11 @@ class HomePage extends Component {
       selectedTables: newArray,
     });
   };
-
+  
+  setAlertMessage(message) {
+    this.setState({ alertMessage: message });
+  }
+  
   setTables(res) {
     var tablesAvailable = arrayOfTables;
     var tablesTaken = res;
@@ -183,7 +237,9 @@ class HomePage extends Component {
         }
       }) //
       .catch((err) => {console.log(err)
-      this.setState({showError2: true, errMes: err.response.data.msg})});
+      this.setState({showError2: true, errMes: err.response.data.msg})
+      this.setAlertMessage(err.message)
+    });
   };
 
   login(e) {
@@ -218,6 +274,7 @@ class HomePage extends Component {
       .catch((err) => {
         console.log("errrr", err.response);
         this.setState({showError: true, errMes: err.response.data.msg})
+        this.setAlertMessage(err.message);
       });
   }
 
@@ -355,8 +412,9 @@ class HomePage extends Component {
               </Button>
                 )}
            
-            <Form onSubmit={this.onSubmit} style={{ marginTop: "10px" }}>
+            <Form onSubmit={this.onSubmit, this.handleSubmit} style={{ marginTop: "10px" }}>
             {this.state.showError2 ? <Alert variant={"danger"}>{this.state.errMes}</Alert> : <></>}
+              <Alert2 message={this.state.alertMessage}/>
               <Form.Group className="mb-3">
                 <Form.Label>Name</Form.Label>
                 <Form.Control
@@ -372,18 +430,18 @@ class HomePage extends Component {
                 <Form.Label>Email</Form.Label>
                 <Form.Control
                   autoFocus
-                  type="text"
+                  type="email"
                   value={this.state.email|| ''}
                   name="email"
                   onChange={this.handleChange}
-                  placeholder="Enter Email"
+                  placeholder="Enter email"
                 />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Phone</Form.Label>
                 <Form.Control
                   autoFocus
-                  type="number"
+                  type="phone"
                   value={this.state.phone|| ''}
                   name="phone"
                   onChange={this.handleChange}
@@ -420,6 +478,16 @@ class HomePage extends Component {
         </Row>
       </Container>
     );
+  }
+}
+
+class Alert2 extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    if (!this.props.message) return "";
+    return <div id="alert">{this.props.message}</div>;
   }
 }
 export default HomePage;
