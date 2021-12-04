@@ -32,7 +32,7 @@ componentDidUpdate(){
           <p>Name: {this.props.user.name}</p>
           <p>Email: {this.props.user.email}</p>
           <p>Phone Number: {this.props.user.phone}</p>
-          
+          <p>Earned Points: </p> 
         </Row>
         <Row >
           Reservations:
@@ -42,6 +42,7 @@ componentDidUpdate(){
             <p>time: {rr.time}</p>
             <p>Amount of Diners: {rr.diners}</p>
             <p>tables: {rr.tables}</p>
+            <p>Payment Method: </p>
             </div>
           )}
         </Row>
