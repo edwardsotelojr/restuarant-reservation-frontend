@@ -216,7 +216,7 @@ class HomePage extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    const { name, diners, email, phone, selectedTables, timee, datee, sameDay,
+    const { name, diners, email, phone, selectedTables, timee, datee,
     creditCardHold } =
       this.state;
     const reservation = {
@@ -227,7 +227,6 @@ class HomePage extends Component {
       tables: selectedTables,
       time: timee,
       date: datee,
-      sameDay,
       creditCardHold
     };
     axios
@@ -309,6 +308,9 @@ class HomePage extends Component {
                     this.setState({sameDay: true})
                     if ((newValue.getDate() != today.getDate() || newValue.getMonth() !=  today.getMonth() || newValue.getFullYear() != today.getFullYear())) {
                       this.setState({sameDay: false})
+                    }
+                    if((newValue.getDay() ==0 || newValue.getDay() == 6)){
+                      this.setState({BusyDay: true}) //weekends
                     }
 
                   this.setState({ date: newValue });
