@@ -290,6 +290,7 @@ class HomePage extends Component {
   }
 
   render() {
+    var today = new Date();
     //console.log(this.props)
     return (
       <Container>
