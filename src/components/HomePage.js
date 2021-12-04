@@ -83,6 +83,7 @@ class HomePage extends Component {
       phone: null,
       name: "",
       BusyDay: false,
+      sameDay: true,
       creditCardHold: null
     };
     this.login = this.login.bind(this);
@@ -215,7 +216,7 @@ class HomePage extends Component {
 
   onSubmit = (e) => {
     e.preventDefault();
-    const { name, diners, email, phone, selectedTables, timee, datee,
+    const { name, diners, email, phone, selectedTables, timee, datee, sameDay,
     creditCardHold } =
       this.state;
     const reservation = {
@@ -226,6 +227,7 @@ class HomePage extends Component {
       tables: selectedTables,
       time: timee,
       date: datee,
+      sameDay,
       creditCardHold
     };
     axios
@@ -288,6 +290,7 @@ class HomePage extends Component {
   }
 
   render() {
+    var today = new Date();
     //console.log(this.props)
     return (
       <Container>
@@ -298,11 +301,23 @@ class HomePage extends Component {
                 label="Select Date"
                 value={this.state.date}
                 onChange={(newValue) => {
+                  if (newValue != null) {
+                  if ((newValue.getDate() >= today.getDate() && newValue.getMonth() >=  today.getMonth() && newValue.getFullYear() >= today.getFullYear())
+                   || (newValue.getMonth() > today.getMonth() && newValue.getYear >= today.getYear())
+                   || (newValue.getYear() > today.getYear())){
+                    this.setState({time: ""})
+                    this.setState({sameDay: true})
+                    if ((newValue.getDate() != today.getDate() || newValue.getMonth() !=  today.getMonth() || newValue.getFullYear() != today.getFullYear())) {
+                      this.setState({sameDay: false})
+                    }
+
                   this.setState({ date: newValue });
                   this.getTableList(
                     document.getElementsByName("dateValue")[0],
                     document.getElementsByName("timeValue")[0]
                   );
+                  }
+                }
                 }}
                 renderInput={(params) => (
                   <TextField name={"dateValue"} {...params} />
@@ -317,11 +332,19 @@ class HomePage extends Component {
                 value={this.state.time}
                 minutesStep={15}
                 onChange={(newValue) => {
+                  if(newValue != null){
+                  if((newValue.getHours() > 9 && newValue.getHours() < 21  && newValue.getHours() > today.getHours())
+                  || (newValue.getHours() == 21  && newValue.getHours() > today.getHours() && newValue.getMinutes() == 0) 
+                  || (newValue.getHours() == today.getHours() && newValue.getMinutes() > today.getMinutes())
+                  || (newValue.getHours() > 9 && newValue.getHours() < 21 && !(this.state.sameDay))
+                  || (newValue.getHours() == 21  && newValue.getMinutes() == 0 && !(this.state.sameDay))) {
                   this.setState({ time: newValue });
                   this.getTableList(
                     document.getElementsByName("dateValue")[0],
                     document.getElementsByName("timeValue")[0]
                   );
+                  }
+                }
                 }}
                 renderInput={(params) => (
                   <TextField name={"timeValue"} {...params} />
