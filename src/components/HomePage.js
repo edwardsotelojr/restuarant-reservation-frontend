@@ -481,6 +481,16 @@ class HomePage extends Component {
                   placeholder="Enter Amount of Diners"
                 />
               </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Payment Method</Form.Label>
+                <Form.Control
+                  autoFocus
+                  type="text"
+                  name="payment"
+                  //onChange={this.handleChange}
+                  placeholder="cash, credit, check"
+                />
+              </Form.Group>
               {this.state.BusyDay ? (
                 <Form.Group className="mb-3">
                 <Form.Label>Credit Card</Form.Label>
