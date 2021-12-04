@@ -503,6 +503,8 @@ class HomePage extends Component {
                   onChange={this.handleChange}
                   placeholder="Enter Credit Card Number"
                 />
+              <label for="alert">Notice: No show will result in min. $10 fee!</label>
+
               </Form.Group>
               ) : <></>}
               
