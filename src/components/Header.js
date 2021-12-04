@@ -57,7 +57,7 @@ islogged(){
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               <Nav.Link href="/Signup">Sign Up</Nav.Link>
-
+              <Nav.Link href="/user">Reserved Info</Nav.Link>
               {Object.keys(this.state.user).length != 0 ? 
               <>
               <Button onClick={(e) => {
@@ -65,11 +65,20 @@ islogged(){
                       history.push("/user");
                       console.log(this.state.user.name);
                     }}>{this.state.user.name}
-                </Button> <Button onClick={(e) => {
-                      e.preventDefault();
-                      this.logout()
-                    }}>Logout
-                </Button></>: <></>}
+              </Button> 
+              <Button onClick={(e) => {
+                  e.preventDefault();
+                  this.logout()
+                  }}>Logout
+              </Button>
+              <Button onClick={(e) => {
+                  e.preventDefault();
+                  //this.logout()
+                  window.location.href='./user';
+                  }}>Profile
+              </Button>
+              </>: 
+              <></>}
             </Nav>
           </Navbar.Collapse>
         </Container>
